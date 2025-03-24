@@ -1,9 +1,9 @@
-# STATE: 0% FINISHED
+# STATE: 3% FINISHED
 
 # TODO
 ## Core
-- [ ] Window & Input Handling
-- [ ] Vulkan Initialization
+- [x] Window & Input Handling
+- [x] Vulkan Initialization
 - [ ] Memory Management
 - [ ] Scene Management
 - [ ] Resource Management
