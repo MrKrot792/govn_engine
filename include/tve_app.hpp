@@ -4,6 +4,7 @@
 #include "tve_engine_swap_chain.hpp"
 #include "tve_pipeline.hpp"
 #include "tve_window.hpp"
+#include "tve_model.hpp"
 
 // std
 #include <memory>
@@ -26,6 +27,7 @@ class App
     void run();
 
   private:
+    void loadModels();
     void createPipelineLayout();
     void createPipeline();
     void createCommandBuffers();
@@ -38,5 +40,6 @@ class App
     std::unique_ptr<TvePipeline> tvePipeline;
     VkPipelineLayout pipelineLayout;
     std::vector<VkCommandBuffer> commandBuffers;
+    std::unique_ptr<TveModel> tveModel;
 };
 } // namespace tve

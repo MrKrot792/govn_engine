@@ -1,9 +1,11 @@
 #include "tve_app.hpp"
+#include "tve_model.hpp"
 #include <GLFW/glfw3.h>
 #include <array>
 #include <cstdint>
 #include <memory>
 #include <stdexcept>
+#include <vector>
 #include <vulkan/vulkan_core.h>
 
 namespace tve
@@ -11,6 +13,7 @@ namespace tve
 
 App::App()
 {
+    loadModels();
     createPipelineLayout();
     createPipeline();
     createCommandBuffers();
@@ -101,7 +104,8 @@ void App::createCommandBuffers()
         vkCmdBeginRenderPass(commandBuffers[i], &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
 
         tvePipeline->bind(commandBuffers[i]);
-        vkCmdDraw(commandBuffers[i], 3, 1, 0, 0);
+        tveModel->bind(commandBuffers[i]);
+        tveModel->draw(commandBuffers[i]);
 
         vkCmdEndRenderPass(commandBuffers[i]);
         if (vkEndCommandBuffer(commandBuffers[i]) != VK_SUCCESS)
@@ -116,16 +120,31 @@ void App::drawFrame()
     uint32_t imageIndex;
     auto result = tveSwapChain.acquireNextImage(&imageIndex);
 
-    if(result != VK_SUCCESS && result != VK_SUBOPTIMAL_KHR)
+    if (result != VK_SUCCESS && result != VK_SUBOPTIMAL_KHR)
     {
         throw std::runtime_error("Failed to acquire swap chain image");
     }
 
     result = tveSwapChain.submitCommandBuffers(&commandBuffers[imageIndex], &imageIndex);
-    if(result != VK_SUCCESS)
+    if (result != VK_SUCCESS)
     {
         throw std::runtime_error("Failed to present swap chain image");
     }
+}
+
+void App::loadModels()
+{
+    //std::vector<TveModel::Vertex> vertices{{{0.0f, -0.5f}}, {{0.5f, 0.5f}}, {{-0.5f, 0.5f}}};
+    std::vector<TveModel::Vertex> vertices{
+        {{-0.5f, 0.5f}},
+        {{-0.5f, -0.5f}},
+        {{0.5f, -0.5f}},
+        {{0.5f, -0.5f}},
+        {{0.5f, 0.5f}},
+        {{-0.5f, 0.5f}},
+    };
+
+    tveModel = std::make_unique<TveModel>(tveDevice, vertices);
 }
 
 } // namespace tve
