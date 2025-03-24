@@ -56,8 +56,8 @@ void App::createPipeline()
     auto pipelineConfig = TvePipeline::defaultPipelineConfigInfo(tveSwapChain.width(), tveSwapChain.height());
     pipelineConfig.renderPass = tveSwapChain.getRenderPass();
     pipelineConfig.pipelineLayout = pipelineLayout;
-    tvePipeline = std::make_unique<TvePipeline>(tveDevice, "../shaders/simple_shader.vert.spv",
-                                                "../shaders/simple_shader.frag.spv", pipelineConfig);
+    tvePipeline = std::make_unique<TvePipeline>(tveDevice, "./shaders/simple_shader.vert.spv",
+                                                "./shaders/simple_shader.frag.spv", pipelineConfig);
 }
 
 void App::createCommandBuffers()

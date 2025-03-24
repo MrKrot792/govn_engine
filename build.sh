@@ -7,6 +7,10 @@ elif [ ! -d "build/" ]; then
     cd build
     cmake ..
     make
+elif [ "$1" == "b" ] || [ "$1" == "build" ]; then
+    cd build
+    cmake ..
+    make
 else
     echo "Nothig to do: abort"
 fi
