@@ -5,10 +5,9 @@
 #include <array>
 #include <cstdlib>
 #include <cstring>
-#include <iostream>
-#include <iterator>
 #include <limits>
 #include <stdexcept>
+#include "tve_log.hpp"
 
 namespace tve
 {
@@ -388,12 +387,12 @@ VkPresentModeKHR TveSwapChain::chooseSwapPresentMode(const std::vector<VkPresent
     {
         if (availablePresentMode == VK_PRESENT_MODE_MAILBOX_KHR)
         {
-            std::cout << "Present mode: Mailbox" << std::endl;
+            LOG_INFO("Present mode: Mailbox");
             return availablePresentMode;
         }
     }
 
-    std::cout << "Present mode: V-Sync" << std::endl;
+    LOG_INFO("Present mode: V-Sync");
 
 
     return VK_PRESENT_MODE_FIFO_KHR;

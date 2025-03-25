@@ -1,10 +1,13 @@
 #include "tve_engine_device.hpp"
 #include "tve_window.hpp"
+#include "tve_log.hpp"
 
 // std headers
+#include <cstdio>
 #include <cstring>
 #include <iostream>
 #include <set>
+#include <string>
 #include <unordered_set>
 
 namespace tve
@@ -95,7 +98,7 @@ void TveDevice::createInstance()
 
     for(int i = 0; i < extensions.size(); i++)
     {
-        std::cout << extensions.at(i) << std::endl;
+        LOG_INFO(extensions.at(i));
     }
 
     VkDebugUtilsMessengerCreateInfoEXT debugCreateInfo;
@@ -129,7 +132,8 @@ void TveDevice::pickPhysicalDevice()
     {
         throw std::runtime_error("failed to find GPUs with Vulkan support!");
     }
-    std::cout << "Device count: " << deviceCount << std::endl;
+
+    LOG_INFO("Device count: " + std::to_string(deviceCount));
     std::vector<VkPhysicalDevice> devices(deviceCount);
     vkEnumeratePhysicalDevices(instance, &deviceCount, devices.data());
 
@@ -144,11 +148,13 @@ void TveDevice::pickPhysicalDevice()
 
     if (physicalDevice == VK_NULL_HANDLE)
     {
-        throw std::runtime_error("failed to find a suitable GPU!");
+        LOG_ERROR("Failed to find a suitable GPU!");
+        throw std::runtime_error("Failed to find a suitable GPU!");
     }
 
     vkGetPhysicalDeviceProperties(physicalDevice, &properties);
-    std::cout << "physical device: " << properties.deviceName << std::endl;
+    LOG_INFO(properties.deviceName);
+
 }
 
 void TveDevice::createLogicalDevice()
@@ -320,19 +326,19 @@ void TveDevice::hasGflwRequiredInstanceExtensions()
     std::vector<VkExtensionProperties> extensions(extensionCount);
     vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, extensions.data());
 
-    std::cout << "available extensions:" << std::endl;
+    LOG_INFO("Available extensions:\n");
     std::unordered_set<std::string> available;
     for (const auto &extension : extensions)
     {
-        std::cout << "\t" << extension.extensionName << std::endl;
+        LOG_INFO(extension.extensionName);
         available.insert(extension.extensionName);
     }
 
-    std::cout << "required extensions:" << std::endl;
+    LOG_INFO("Required extensions: \n");
     auto requiredExtensions = getRequiredExtensions();
     for (const auto &required : requiredExtensions)
     {
-        std::cout << "\t" << required << std::endl;
+        LOG_INFO(required);
         if (available.find(required) == available.end())
         {
             throw std::runtime_error("Missing required glfw extension");

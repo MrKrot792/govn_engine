@@ -1,1 +1,44 @@
-build/compile_commands.json
+[
+{
+  "directory": "/home/mrkrot/Documents/programming/cpp/govn_engine/build",
+  "command": "/usr/bin/c++  -I/home/mrkrot/Documents/programming/cpp/govn_engine/include -std=gnu++17 -o CMakeFiles/govnengine.dir/src/main.cpp.o -c /home/mrkrot/Documents/programming/cpp/govn_engine/src/main.cpp",
+  "file": "/home/mrkrot/Documents/programming/cpp/govn_engine/src/main.cpp",
+  "output": "CMakeFiles/govnengine.dir/src/main.cpp.o"
+},
+{
+  "directory": "/home/mrkrot/Documents/programming/cpp/govn_engine/build",
+  "command": "/usr/bin/c++  -I/home/mrkrot/Documents/programming/cpp/govn_engine/include -std=gnu++17 -o CMakeFiles/govnengine.dir/src/tve_app.cpp.o -c /home/mrkrot/Documents/programming/cpp/govn_engine/src/tve_app.cpp",
+  "file": "/home/mrkrot/Documents/programming/cpp/govn_engine/src/tve_app.cpp",
+  "output": "CMakeFiles/govnengine.dir/src/tve_app.cpp.o"
+},
+{
+  "directory": "/home/mrkrot/Documents/programming/cpp/govn_engine/build",
+  "command": "/usr/bin/c++  -I/home/mrkrot/Documents/programming/cpp/govn_engine/include -std=gnu++17 -o CMakeFiles/govnengine.dir/src/tve_engine_device.cpp.o -c /home/mrkrot/Documents/programming/cpp/govn_engine/src/tve_engine_device.cpp",
+  "file": "/home/mrkrot/Documents/programming/cpp/govn_engine/src/tve_engine_device.cpp",
+  "output": "CMakeFiles/govnengine.dir/src/tve_engine_device.cpp.o"
+},
+{
+  "directory": "/home/mrkrot/Documents/programming/cpp/govn_engine/build",
+  "command": "/usr/bin/c++  -I/home/mrkrot/Documents/programming/cpp/govn_engine/include -std=gnu++17 -o CMakeFiles/govnengine.dir/src/tve_engine_swap_chain.cpp.o -c /home/mrkrot/Documents/programming/cpp/govn_engine/src/tve_engine_swap_chain.cpp",
+  "file": "/home/mrkrot/Documents/programming/cpp/govn_engine/src/tve_engine_swap_chain.cpp",
+  "output": "CMakeFiles/govnengine.dir/src/tve_engine_swap_chain.cpp.o"
+},
+{
+  "directory": "/home/mrkrot/Documents/programming/cpp/govn_engine/build",
+  "command": "/usr/bin/c++  -I/home/mrkrot/Documents/programming/cpp/govn_engine/include -std=gnu++17 -o CMakeFiles/govnengine.dir/src/tve_model.cpp.o -c /home/mrkrot/Documents/programming/cpp/govn_engine/src/tve_model.cpp",
+  "file": "/home/mrkrot/Documents/programming/cpp/govn_engine/src/tve_model.cpp",
+  "output": "CMakeFiles/govnengine.dir/src/tve_model.cpp.o"
+},
+{
+  "directory": "/home/mrkrot/Documents/programming/cpp/govn_engine/build",
+  "command": "/usr/bin/c++  -I/home/mrkrot/Documents/programming/cpp/govn_engine/include -std=gnu++17 -o CMakeFiles/govnengine.dir/src/tve_pipeline.cpp.o -c /home/mrkrot/Documents/programming/cpp/govn_engine/src/tve_pipeline.cpp",
+  "file": "/home/mrkrot/Documents/programming/cpp/govn_engine/src/tve_pipeline.cpp",
+  "output": "CMakeFiles/govnengine.dir/src/tve_pipeline.cpp.o"
+},
+{
+  "directory": "/home/mrkrot/Documents/programming/cpp/govn_engine/build",
+  "command": "/usr/bin/c++  -I/home/mrkrot/Documents/programming/cpp/govn_engine/include -std=gnu++17 -o CMakeFiles/govnengine.dir/src/tve_window.cpp.o -c /home/mrkrot/Documents/programming/cpp/govn_engine/src/tve_window.cpp",
+  "file": "/home/mrkrot/Documents/programming/cpp/govn_engine/src/tve_window.cpp",
+  "output": "CMakeFiles/govnengine.dir/src/tve_window.cpp.o"
+}
+]

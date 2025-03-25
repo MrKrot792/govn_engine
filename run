@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+if [ "$1" == "r" ] || [ "$1" == "run" ]; then # Run engine (will be removed on release)
+    build/govnengine
+elif [ "$1" == "b" ] || [ "$1" == "build" ]; then # Build script (build + compile)
+    mkdir build
+    cd build
+    cmake ..
+    make
+else # Compile script (does not create a `build/` folder)
+    cd build
+    cmake ..
+    make
+fi
+

@@ -1,6 +1,6 @@
-# STATE: 3% FINISHED
+# STATE: 8% FINISHED
 
-# TODO
+# FEATURES
 ## Core
 - [x] Window & Input Handling
 - [x] Vulkan Initialization
@@ -15,9 +15,9 @@
 - [ ] Lighting
 - [ ] Shadows
 - [ ] Post-Processing Effects
-- [ ] Render Graph
+- [ ] Render Graph *\(Not interested\)*
 
-## Physics
+## Physics *(I'm not interested in this)*
 - [ ] Collision Detection
 - [ ] Rigid Body Simulation
 - [ ] Constraints & Joints
@@ -32,14 +32,12 @@
 - [ ] Hot Reloading
 
 ## Optimization
-- [ ] Level of Detail (LOD)
 - [ ] Frustum Culling
-- [ ] Multi-threaded Rendering
 
 ## Debugging & Tools
 - [ ] Debug UI
 - [ ] Performance Profiling
-- [ ] Logging System
+- [x] Logging System
 
 ## Final Features
 - [ ] Input Handling
@@ -48,4 +46,4 @@
 
 ---
 
-Hello! This is **govn_engine**, my Vulkan pet project.
+Hello! This is `govn_engine`, my Vulkan pet project. Hope you'll enjoy it!
