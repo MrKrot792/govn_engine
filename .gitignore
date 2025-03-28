@@ -1,4 +1,4 @@
-/build/
-/.cache/
-/.git/
+build/
+.cache/
+.git/
 log.txt
