@@ -27,8 +27,8 @@ void Logger::log(Level level, const std::string &message)
 
     std::string logMessage = "[" + timestamp + "] [" + levelStr + "] " + message;
 
-    std::cout << logMessage << std::endl; // Вывод в консоль
-    file << logMessage << std::endl;      // Запись в файл
+    std::cout << logMessage << std::endl;
+    file << logMessage << std::endl;
 }
 
 void Logger::vlog(Level level, const std::string &message, float value)
@@ -47,8 +47,8 @@ void Logger::vlog(Level level, const std::string &message, float value)
 
     std::string logMessage = "[" + timestamp + "] [" + levelStr + "] " + message + ": " + std::to_string(value);
 
-    std::cout << logMessage << std::endl; // Вывод в консоль
-    file << logMessage << std::endl;      // Запись в файл
+    std::cout << logMessage << std::endl;
+    file << logMessage << std::endl;
 }
 
 std::string Logger::getTimestamp()
