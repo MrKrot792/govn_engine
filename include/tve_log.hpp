@@ -26,7 +26,7 @@ class Logger
     static Logger &getInstance();
 
     void log(Level level, const std::string &message);
-    void vlog(Level level, const std::string &message, float value);
+    void vlog(Level level, const std::string &message, double value);
 
   private:
     std::string logFile_;

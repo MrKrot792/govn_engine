@@ -31,7 +31,7 @@ void Logger::log(Level level, const std::string &message)
     file << logMessage << std::endl;
 }
 
-void Logger::vlog(Level level, const std::string &message, float value)
+void Logger::vlog(Level level, const std::string &message, double value)
 {
     std::lock_guard<std::mutex> lock(mutex_);
 
