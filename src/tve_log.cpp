@@ -51,6 +51,26 @@ void Logger::vlog(Level level, const std::string &message, double value)
     file << logMessage << std::endl;
 }
 
+void Logger::vlog(Level level, const std::string &message, long long value)
+{
+    std::lock_guard<std::mutex> lock(mutex_);
+
+    std::ofstream file(logFile_, std::ios::app);
+    if (!file)
+    {
+        std::cerr << "[ERROR] Can't open log file!\n";
+        return;
+    }
+
+    std::string levelStr = getLevelString(level);
+    std::string timestamp = getTimestamp();
+
+    std::string logMessage = "[" + timestamp + "] [" + levelStr + "] " + message + ": " + std::to_string(value);
+
+    std::cout << logMessage << std::endl;
+    file << logMessage << std::endl;
+}
+
 std::string Logger::getTimestamp()
 {
     using namespace std::chrono;

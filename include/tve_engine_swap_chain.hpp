@@ -7,6 +7,7 @@
 
 // std lib headers
 #include <string>
+#include <memory>
 #include <vector>
 
 namespace tve
@@ -18,6 +19,7 @@ class TveSwapChain
     static constexpr int MAX_FRAMES_IN_FLIGHT = 2;
 
     TveSwapChain(TveDevice &deviceRef, VkExtent2D windowExtent);
+    TveSwapChain(TveDevice &deviceRef, VkExtent2D windowExtent, std::shared_ptr<TveSwapChain> previous);
     ~TveSwapChain();
 
     TveSwapChain(const TveSwapChain &) = delete;
@@ -66,6 +68,7 @@ class TveSwapChain
     VkResult submitCommandBuffers(const VkCommandBuffer *buffers, uint32_t *imageIndex);
 
   private:
+    void init();
     void createSwapChain();
     void createImageViews();
     void createDepthResources();
@@ -94,6 +97,7 @@ class TveSwapChain
     VkExtent2D windowExtent;
 
     VkSwapchainKHR swapChain;
+    std::shared_ptr<TveSwapChain> oldSwapChain;
 
     std::vector<VkSemaphore> imageAvailableSemaphores;
     std::vector<VkSemaphore> renderFinishedSemaphores;

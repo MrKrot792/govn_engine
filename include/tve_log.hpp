@@ -7,10 +7,10 @@
 #define LOG_ERROR(msg) Logger::getInstance().log(Logger::ERROR, msg)
 #define LOG_DEBUG(msg) Logger::getInstance().log(Logger::DEBUG, msg)
 
-#define VLOG_INFO(msg, vl) Logger::getInstance().log(Logger::INFO, msg, vl)
-#define VLOG_WARN(msg, vl) Logger::getInstance().log(Logger::WARNING, msg, vl)
-#define VLOG_ERROR(msg, vl) Logger::getInstance().log(Logger::ERROR, msg, vl)
-#define VLOG_DEBUG(msg, vl) Logger::getInstance().log(Logger::DEBUG, msg, vl)
+#define VLOG_INFO(msg, vl) Logger::getInstance().vlog(Logger::INFO, msg, vl)
+#define VLOG_WARN(msg, vl) Logger::getInstance().vlog(Logger::WARNING, msg, vl)
+#define VLOG_ERROR(msg, vl) Logger::getInstance().vlog(Logger::ERROR, msg, vl)
+#define VLOG_DEBUG(msg, vl) Logger::getInstance().vlog(Logger::DEBUG, msg, vl)
 
 class Logger
 {
@@ -27,6 +27,7 @@ class Logger
 
     void log(Level level, const std::string &message);
     void vlog(Level level, const std::string &message, double value);
+    void vlog(Level level, const std::string &message, long long value);
 
   private:
     std::string logFile_;

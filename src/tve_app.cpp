@@ -1,20 +1,26 @@
 #include "tve_app.hpp"
 #include "tve_log.hpp"
 #include "tve_model.hpp"
-#include <GLFW/glfw3.h>
-#include <array>
-#include <cstdint>
-#include <cstdio>
-#include <glm/detail/qualifier.hpp>
-#include <iterator>
-#include <memory>
-#include <stdexcept>
-#include <vector>
-#include <vulkan/vulkan_core.h>
+#include <ratio>
+#include <sys/types.h>
 
+// libs
 #define GLM_FORCE_RADIANS
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
 #include <glm/glm.hpp>
+
+#include <GLFW/glfw3.h>
+#include <glm/detail/qualifier.hpp>
+#include <vulkan/vulkan_core.h>
+
+// std
+#include <array>
+#include <chrono>
+#include <cstdint>
+#include <cstdio>
+#include <memory>
+#include <stdexcept>
+#include <vector>
 
 #define CLEAR_VALUE {0.231f, 0.243f, 0.259f, 1.0f}
 
@@ -46,10 +52,17 @@ App::~App()
 
 void App::run()
 {
+    std::chrono::duration<long long, std::nano> delta;
+
     while (!tveWindow.shouldClose())
     {
+        auto start = std::chrono::high_resolution_clock().now();
         glfwPollEvents();
-        drawFrame();
+        drawFrame(delta.count() / 1000000000.0);
+        auto end = std::chrono::high_resolution_clock().now();
+        std::chrono::duration<long long, std::nano> delta = end - start;
+
+        VLOG_INFO("Delta: ", (double)delta.count() / 1000000000.0);
     }
 
     vkDeviceWaitIdle(tveDevice.device());
@@ -98,7 +111,20 @@ void App::recreateSwapChain()
     }
 
     vkDeviceWaitIdle(tveDevice.device());
-    tveSwapChain = std::make_unique<TveSwapChain>(tveDevice, extent);
+
+    if (tveSwapChain == nullptr)
+    {
+        tveSwapChain = std::make_unique<TveSwapChain>(tveDevice, extent);
+    }
+    else
+    {
+        tveSwapChain = std::make_unique<TveSwapChain>(tveDevice, extent, std::move(tveSwapChain));
+        if(tveSwapChain->imageCount() != commandBuffers.size())
+        {
+            freeCommandBuffers();
+            createCommandBuffers();
+        }
+    }
     createPipeline();
 }
 
@@ -119,7 +145,13 @@ void App::createCommandBuffers()
     }
 }
 
-void App::recordCommandBuffer(int imageIndex)
+void App::freeCommandBuffers()
+{
+    vkFreeCommandBuffers(tveDevice.device(), tveDevice.getCommandPool(), static_cast<uint32_t>(commandBuffers.size()), commandBuffers.data());
+    commandBuffers.clear();
+}
+
+void App::recordCommandBuffer(int imageIndex, double delta)
 {
     VkCommandBufferBeginInfo beginInfo{};
     beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
@@ -160,19 +192,16 @@ void App::recordCommandBuffer(int imageIndex)
     tvePipeline->bind(commandBuffers[imageIndex]);
     tveModel->bind(commandBuffers[imageIndex]);
 
-    for (int j = 0; j < 4; j++)
-    {
-        SimplePushConstantData push{};
-        push.offset = {0.0f, -0.4f + j * .25f};
-        push.color = {0.0f, 0.0f, 0.2f + j * 0.2f};
+    SimplePushConstantData push{};
 
-        vkCmdPushConstants(commandBuffers[imageIndex], pipelineLayout,
-                           VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, 0, sizeof(SimplePushConstantData),
-                           &push);
+    push.color = {0.92f, 0.19f, 0.19f};
+    push.offset = {0.0f, 0.5f};
 
-        tveModel->draw(commandBuffers[imageIndex]);
-    }
+    vkCmdPushConstants(commandBuffers[imageIndex], pipelineLayout,
+                       VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, 0, sizeof(SimplePushConstantData),
+                       &push);
 
+    tveModel->draw(commandBuffers[imageIndex]);
 
     vkCmdEndRenderPass(commandBuffers[imageIndex]);
     if (vkEndCommandBuffer(commandBuffers[imageIndex]) != VK_SUCCESS)
@@ -181,7 +210,7 @@ void App::recordCommandBuffer(int imageIndex)
     }
 }
 
-void App::drawFrame()
+void App::drawFrame(double delta)
 {
     uint32_t imageIndex;
     auto result = tveSwapChain->acquireNextImage(&imageIndex);
@@ -197,7 +226,7 @@ void App::drawFrame()
         throw std::runtime_error("Failed to acquire swap chain image");
     }
 
-    recordCommandBuffer(imageIndex);
+    recordCommandBuffer(imageIndex, delta);
     result = tveSwapChain->submitCommandBuffers(&commandBuffers[imageIndex], &imageIndex);
     if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR || tveWindow.wasWindowResized())
     {
