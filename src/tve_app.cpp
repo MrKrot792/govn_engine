@@ -1,10 +1,12 @@
 #include "tve_app.hpp"
-#include "tve_model.hpp"
 #include "tve_log.hpp"
+#include "tve_model.hpp"
 #include <GLFW/glfw3.h>
 #include <array>
 #include <cstdint>
 #include <cstdio>
+#include <glm/detail/qualifier.hpp>
+#include <iterator>
 #include <memory>
 #include <stdexcept>
 #include <vector>
@@ -18,6 +20,12 @@
 
 namespace tve
 {
+
+struct SimplePushConstantData
+{
+    glm::vec2 offset;
+    alignas(16) glm::vec3 color;
+};
 
 App::App()
 {
@@ -49,13 +57,19 @@ void App::run()
 
 void App::createPipelineLayout()
 {
+
+    VkPushConstantRange pushConstantRange;
+    pushConstantRange.stageFlags = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT;
+    pushConstantRange.offset = 0;
+    pushConstantRange.size = sizeof(SimplePushConstantData);
+
     VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
     pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
     pipelineLayoutInfo.setLayoutCount = 0;
     pipelineLayoutInfo.pSetLayouts = nullptr;
 
-    pipelineLayoutInfo.pushConstantRangeCount = 0;
-    pipelineLayoutInfo.pPushConstantRanges = nullptr;
+    pipelineLayoutInfo.pushConstantRangeCount = 1;
+    pipelineLayoutInfo.pPushConstantRanges = &pushConstantRange;
 
     if (vkCreatePipelineLayout(tveDevice.device(), &pipelineLayoutInfo, nullptr, &pipelineLayout) != VK_SUCCESS)
     {
@@ -145,7 +159,20 @@ void App::recordCommandBuffer(int imageIndex)
 
     tvePipeline->bind(commandBuffers[imageIndex]);
     tveModel->bind(commandBuffers[imageIndex]);
-    tveModel->draw(commandBuffers[imageIndex]);
+
+    for (int j = 0; j < 4; j++)
+    {
+        SimplePushConstantData push{};
+        push.offset = {0.0f, -0.4f + j * .25f};
+        push.color = {0.0f, 0.0f, 0.2f + j * 0.2f};
+
+        vkCmdPushConstants(commandBuffers[imageIndex], pipelineLayout,
+                           VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, 0, sizeof(SimplePushConstantData),
+                           &push);
+
+        tveModel->draw(commandBuffers[imageIndex]);
+    }
+
 
     vkCmdEndRenderPass(commandBuffers[imageIndex]);
     if (vkEndCommandBuffer(commandBuffers[imageIndex]) != VK_SUCCESS)
@@ -172,9 +199,9 @@ void App::drawFrame()
 
     recordCommandBuffer(imageIndex);
     result = tveSwapChain->submitCommandBuffers(&commandBuffers[imageIndex], &imageIndex);
-    if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR || tveWindow.wasWindowResized()) 
+    if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR || tveWindow.wasWindowResized())
     {
-        tveWindow.resetWindowResizedFlag();    
+        tveWindow.resetWindowResizedFlag();
         recreateSwapChain();
         return;
     }
@@ -189,9 +216,9 @@ void App::loadModels()
 {
     // std::vector<TveModel::Vertex> vertices{{{0.0f, -0.5f}}, {{0.5f, 0.5f}}, {{-0.5f, 0.5f}}};
     std::vector<TveModel::Vertex> vertices{
-        {{0.0f, -1.0f}, {1.0, 0.0, 0.0}},
-        {{1.0f, 1.0f}, {0.0, 1.0, 0.0}},
-        {{-1.0f, 1.0f}, {0.0, 0.0, 1.0}},
+        {{0.0f, -0.5f}, {1.0, 0.0, 0.0}},
+        {{0.5f, 0.5f}, {0.0, 1.0, 0.0}},
+        {{-0.5f, 0.5f}, {0.0, 0.0, 1.0}},
     };
 
     tveModel = std::make_unique<TveModel>(tveDevice, vertices);
