@@ -32,9 +32,9 @@ class App
     void createPipeline();
     void createCommandBuffers();
     void freeCommandBuffers();
-    void drawFrame(double delta);
+    void drawFrame();
     void recreateSwapChain();
-    void recordCommandBuffer(int imageIndex, double delta);
+    void recordCommandBuffer(int imageIndex);
 
     TveWindow tveWindow{WIDTH, HEIGHT, "Vulkan"};
     TveDevice tveDevice{tveWindow};

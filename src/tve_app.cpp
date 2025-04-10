@@ -52,17 +52,10 @@ App::~App()
 
 void App::run()
 {
-    std::chrono::duration<long long, std::nano> delta;
-
     while (!tveWindow.shouldClose())
     {
-        auto start = std::chrono::high_resolution_clock().now();
         glfwPollEvents();
-        drawFrame(delta.count() / 1000000000.0);
-        auto end = std::chrono::high_resolution_clock().now();
-        std::chrono::duration<long long, std::nano> delta = end - start;
-
-        VLOG_INFO("Delta: ", (double)delta.count() / 1000000000.0);
+        drawFrame();
     }
 
     vkDeviceWaitIdle(tveDevice.device());
@@ -119,12 +112,13 @@ void App::recreateSwapChain()
     else
     {
         tveSwapChain = std::make_unique<TveSwapChain>(tveDevice, extent, std::move(tveSwapChain));
-        if(tveSwapChain->imageCount() != commandBuffers.size())
+        if (tveSwapChain->imageCount() != commandBuffers.size())
         {
             freeCommandBuffers();
             createCommandBuffers();
         }
     }
+
     createPipeline();
 }
 
@@ -147,11 +141,12 @@ void App::createCommandBuffers()
 
 void App::freeCommandBuffers()
 {
-    vkFreeCommandBuffers(tveDevice.device(), tveDevice.getCommandPool(), static_cast<uint32_t>(commandBuffers.size()), commandBuffers.data());
+    vkFreeCommandBuffers(tveDevice.device(), tveDevice.getCommandPool(), static_cast<uint32_t>(commandBuffers.size()),
+                         commandBuffers.data());
     commandBuffers.clear();
 }
 
-void App::recordCommandBuffer(int imageIndex, double delta)
+void App::recordCommandBuffer(int imageIndex)
 {
     VkCommandBufferBeginInfo beginInfo{};
     beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
@@ -192,16 +187,16 @@ void App::recordCommandBuffer(int imageIndex, double delta)
     tvePipeline->bind(commandBuffers[imageIndex]);
     tveModel->bind(commandBuffers[imageIndex]);
 
-    SimplePushConstantData push{};
+    for (int j = 0; j < 2; j++)
+    {
+        SimplePushConstantData push{};
 
-    push.color = {0.92f, 0.19f, 0.19f};
-    push.offset = {0.0f, 0.5f};
+        vkCmdPushConstants(commandBuffers[imageIndex], pipelineLayout,
+                           VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, 0, sizeof(SimplePushConstantData),
+                           &push);
 
-    vkCmdPushConstants(commandBuffers[imageIndex], pipelineLayout,
-                       VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, 0, sizeof(SimplePushConstantData),
-                       &push);
-
-    tveModel->draw(commandBuffers[imageIndex]);
+        tveModel->draw(commandBuffers[imageIndex]);
+    }
 
     vkCmdEndRenderPass(commandBuffers[imageIndex]);
     if (vkEndCommandBuffer(commandBuffers[imageIndex]) != VK_SUCCESS)
@@ -210,7 +205,7 @@ void App::recordCommandBuffer(int imageIndex, double delta)
     }
 }
 
-void App::drawFrame(double delta)
+void App::drawFrame()
 {
     uint32_t imageIndex;
     auto result = tveSwapChain->acquireNextImage(&imageIndex);
@@ -226,7 +221,7 @@ void App::drawFrame(double delta)
         throw std::runtime_error("Failed to acquire swap chain image");
     }
 
-    recordCommandBuffer(imageIndex, delta);
+    recordCommandBuffer(imageIndex);
     result = tveSwapChain->submitCommandBuffers(&commandBuffers[imageIndex], &imageIndex);
     if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR || tveWindow.wasWindowResized())
     {
