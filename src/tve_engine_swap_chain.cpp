@@ -401,12 +401,9 @@ VkPresentModeKHR TveSwapChain::chooseSwapPresentMode(const std::vector<VkPresent
     {
         if (availablePresentMode == VK_PRESENT_MODE_MAILBOX_KHR)
         {
-            LOG_INFO("Present mode: Mailbox");
             return availablePresentMode;
         }
     }
-
-    LOG_INFO("Present mode: V-Sync");
 
     return VK_PRESENT_MODE_FIFO_KHR;
 }
