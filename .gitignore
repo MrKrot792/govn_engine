@@ -3,3 +3,4 @@ build/
 .git/
 log.txt
 shaders/*.spv
+notes.md
